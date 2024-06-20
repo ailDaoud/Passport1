@@ -89,10 +89,6 @@ class AuthController extends Controller
                'password' => Hash::make($request->password),
               //  'password' => bcrypt($request->password)
             ]);
-            /* $user->email = $request->email;
-            $user->name = $request->name;
-            $user->password = Hash::make($request->password);
-            $user->save();*/
             return response()->json([
                 'sucsess' => 1,
                 'result' => $user,
