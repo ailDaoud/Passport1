@@ -27,33 +27,38 @@ class AuthController extends Controller
             }
 
             $user = User::where('email', $request->email)->first();
-            if(!empty($user)){
-                if(Hash::check($request->password,$user->password)){
-                   $token=$user->createToken('token')->accessToken;
-                   return response()->json([
-                    'sucsess' => 1,
-                    'result' => "",
-                    'message' => "user login sucsessfully",
-                    'token'=>$token
-                ], 200);
-                }
-                else{
+            if (!empty($user)) {
+                if (Hash::check($request->password, $user->password)) {
+                    $token = $user->createToken('token')->accessToken;
+                    if($token){
+                        return response()->json([
+                            'sucsess' => 1,
+                            'result' => "",
+                            'message' => "user login sucsessfully",
+                            'token' => $token
+                        ], 200);
+                    }
+                   else{
+                    return response()->json([
+                        'sucsess' => 0,
+                        'result' => "",
+                        'message' => "some thing went wrong",
+                    ], 200);
+                   }
+                } else {
                     return response()->json([
                         'sucsess' => 0,
                         'result' => null,
                         'message' => "password not correct",
                     ], 200);
-
                 }
-            }
-            else{
+            } else {
                 return response()->json([
                     'sucsess' => 0,
                     'result' => null,
                     'message' => "user not found",
                 ], 200);
             }
-
         } catch (Exception $e) {
             return response()->json([
                 'sucsess' => 0,
@@ -81,8 +86,8 @@ class AuthController extends Controller
             $user = User::create([
                 'email' => $request->email,
                 'name' => $request->name,
-                //  'password' => Hash::make($request->password),
-                'password' => bcrypt($request->password)
+               'password' => Hash::make($request->password),
+              //  'password' => bcrypt($request->password)
             ]);
             /* $user->email = $request->email;
             $user->name = $request->name;
@@ -92,13 +97,13 @@ class AuthController extends Controller
                 'sucsess' => 1,
                 'result' => $user,
                 'message' => 'user created sucsessfully',
-               // 'token' => $user->createToken("API-TOKEN")->plainTextToken
+                // 'token' => $user->createToken("API-TOKEN")->plainTextToken
             ], 200);
         } catch (Exception $e) {
             return response()->json([
                 'sucsess' => 0,
                 'result' => null,
-                'message' => $e->getMessage(),
+                'message' => $e,
             ], 200);
         }
     }
